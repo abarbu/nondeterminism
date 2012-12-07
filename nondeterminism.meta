@@ -1,0 +1,26 @@
+;;;  -*- Hen -*-
+
+((egg "nondeterminism.egg")
+ (category data)
+ (author "Jeff Siskind")
+ (maintainer "Andrei Barbu")
+ (license "GPL")
+ (doc-from-wiki)
+ (synopsis "Nondeterminism operators")
+ (depends
+  (setup-helper "1.5.2")
+  (miscmacros "2.91")
+  (check-errors "1.12.0")
+  (condition-utils "1.0.0"))
+ (test-depends test)
+ (files "examples/nondeterminism-dwelling.scm"
+        "examples/nondeterminism-extras.scm"
+        "examples/nondeterminism-kalotan.scm"
+        "examples/nondeterminism-money.scm" 
+        "examples/nondeterminism-pythagorean.scm"
+        "examples/nondeterminism-sat-solve.scm"
+        "nondeterminism.meta" 
+        "nondeterminism.release-info"
+        "nondeterminism.scm" 
+        "nondeterminism.setup" 
+        "tests/run.scm"))

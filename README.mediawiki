@@ -1,0 +1,89 @@
+= Nondeterminism =
+
+This is a Chicken Scheme egg which implements nondeterministic
+computation. Note that its results are deterministic, there are no
+calls to rand(). Originally from Jeff Siskind's QobiScheme. Examples
+are available in the ''examples/'' directory.
+
+=== Generation ===
+
+:(a-boolean)
+:(an-integer-above i)
+:(an-integer-below i)
+:(an-integer)
+:(an-integer-between i j)
+:(a-member-of list)
+:(a-subset-of list)
+:(a-split-of list)
+:(a-permutation-of list)
+:(a-partition-of list)
+:(a-partition-of-size size list)
+
+Generate a number of different kinds of elements.
+
+:(either a b)
+
+Select either a or b, everything is built on top of this primitive.
+
+:(fail)
+
+Backtrack at this point.
+
+=== Execution ===
+
+:(for-effects . body)
+:(all-values . body)
+:(one-value . body
+:(local-one-value . body)
+:(possibly? . body)
+:(necessarily? . body)
+
+Execute the nondeterministic program in ''body'' in a number of different
+ways.
+
+=== Side-effects ===
+
+:unwind-trail
+:unwedge-trail
+
+Pop the stack once or clear it entirely.
+
+:(local-set! obj val)
+:(local-set-car! x y)
+:(local-set-cdr! x y)
+:(local-string-set! s i x)
+:(local-vector-set! v i x)
+
+Perform operations with side-effects that will be undone when backtracking.
+
+:(upon-failure . body)
+
+When backtracking execute ''body'', the above operations are implemented
+in terms of this primitive.
+
+=== Low-level features ===
+
+:<nowiki>*</nowiki>fail?*
+:top-level-fail
+:set-fail!
+
+Internal
+
+=== License ===
+
+   Copyright 1993-1995 University of Toronto. All rights reserved.
+   Copyright 1996 Technion. All rights reserved.
+   Copyright 1996 and 1997 University of Vermont. All rights reserved.
+   Copyright 1997-2001 NEC Research Institute, Inc. All rights reserved.
+   Copyright 2002-2012 Purdue University. All rights reserved.
+   This program is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with this program.  If not, see http://www.gnu.org/licenses.
+__NOTOC__
