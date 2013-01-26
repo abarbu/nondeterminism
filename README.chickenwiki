@@ -1,16 +1,18 @@
-[[tags: egg gui]]
+[[tags: egg data]]
 [[toc:]]
 
-Do not edit this page, it is maintained in the this package's [https://github.com/abarbu/nondeterminism github repository].
+This page is maintained in the package's
+[[https://github.com/abarbu/nondeterminism|github repository]].
 
-= Nondeterminism =
+= Nondeterminism
 
 This is a Chicken Scheme egg which implements nondeterministic
 computation. Note that its results are deterministic, there are no
-calls to rand(). Originally from Jeff Siskind's QobiScheme. Examples
-are available in the ''examples/'' directory.
+calls to rand(). Originally from Jeff Siskind's QobiScheme.
 
-=== Generation ===
+Examples are available in the ''examples/'' directory.
+
+=== Generation
 
 <procedure>(a-boolean)</procedure>
 <procedure>(an-integer-above i)</procedure>
@@ -34,22 +36,37 @@ Select either a or b, everything is built on top of this primitive.
 
 Backtrack at this point.
 
-=== Execution ===
+=== Execution
 
-<procedure>(for-effects . body)</procedure>
-<procedure>(all-values . body)</procedure>
-<procedure>(one-value . body</procedure>
-<procedure>(local-one-value . body)</procedure>
-<procedure>(possibly? . body)</procedure>
-<procedure>(necessarily? . body)</procedure>
+<macro>(for-effects . body)</macro>
 
-Execute the nondeterministic program in ''body'' in a number of different
-ways.
+Execute a nondeterministic computation only for its effects not its
+result.
 
-=== Side-effects ===
+<macro>(all-values . body)</macro>
 
-:unwind-trail
-:unwedge-trail
+Execute a nondeterministic computation and produce a list of
+all of its possible outputs.
+
+<macro>(one-value . body</macro>
+<macro>(local-one-value . body)</macro>
+
+Execute a nondeterministic computation, return one output,
+and discard the rest of the computation.
+
+<macro>(possibly? . body)</macro>
+
+Execute a nondeterministic computation and return #f if it always
+fails.
+
+<macro>(necessarily? . body)</macro>
+
+Execute a nondeterministic computation and return #f if it can fail.
+
+=== Side-effects
+
+<procedure>(unwind-trail)</procedure>
+<procedure>(unwedge-trail)</procedure>
 
 Pop the stack once or clear it entirely.
 
@@ -66,15 +83,15 @@ Perform operations with side-effects that will be undone when backtracking.
 When backtracking execute ''body'', the above operations are implemented
 in terms of this primitive.
 
-=== Low-level features ===
+=== Low-level features
 
 :<nowiki>*</nowiki>fail?*
-:top-level-fail
-:set-fail!
+<procedure>(top-level-fail)</procedure>
+<procedure>(set-fail! f)</procedure>
 
 Internal
 
-=== License ===
+=== License
 
    Copyright 1993-1995 University of Toronto. All rights reserved.
    Copyright 1996 Technion. All rights reserved.

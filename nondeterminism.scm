@@ -23,18 +23,6 @@
  (set! *fail?* #t)
  (set-fail! top-level-fail))
 
-;; (define-macro for-effects
-;;  (lambda (form expander)
-;;   (let ((return (string->uninterned-symbol "return"))
-;; 	(old-fail (string->uninterned-symbol "old-fail")))
-;;    (expander `(call-with-current-continuation
-;; 	       (lambda (,return)
-;; 		(let ((,old-fail fail))
-;; 		 (set-fail! (lambda () (set-fail! ,old-fail) (,return #f)))
-;; 		 (begin ,@(cdr form))
-;; 		 (fail))))
-;; 	     expander))))
-
 (define-syntax for-effects
  (syntax-rules ()
   ((_ body ...)
@@ -45,30 +33,12 @@
       body ...
       (fail)))))))
 
-;; (define-macro all-values
-;;  ;; needs work: To eliminate REVERSE.
-;;  (lambda (form expander)
-;;   (let ((values (string->uninterned-symbol "values")))
-;;    (expander
-;;     `(let ((,values '()))
-;;       (for-effects (set! ,values (cons (begin ,@(cdr form)) ,values)))
-;;       (reverse ,values))
-;;     expander))))
-
 (define-syntax all-values
  (syntax-rules ()
   ((_ body ...)
    (let ((values '()))
     (for-effects (set! values (cons (begin body ...) values)))
     (reverse values)))))
-
-;; (define-macro upon-failure
-;;  (lambda (form expander)
-;;   (let ((old-fail (string->uninterned-symbol "old-fail")))
-;;    (expander
-;;     `(let ((,old-fail fail))
-;;       (set-fail! (lambda () (set-fail! ,old-fail) ,@(cdr form) (fail))))
-;;     expander))))
 
 (define-syntax upon-failure
  (syntax-rules ()
@@ -99,37 +69,11 @@
     (set-fail! (lambda () (set-fail! old-fail) (if *fail?* (c #f) (fail)))))
    #t)))
 
-;; (define-macro either
-;;  (lambda (form expander)
-;;   (expander
-;;    (cond
-;;     ((null? (cdr form)) '(fail))
-;;     ((null? (cdr (cdr form))) (second form))
-;;     (else `(if (a-boolean) ,(second form) (either ,@(cdr (cdr form))))))
-;;    expander)))
-
 (define-syntax either
  (syntax-rules ()
   ((_) (fail))
   ((_ a) a)
   ((_ a b ...) (if (a-boolean) a (either b ...)))))
-
-;; (define-macro one-value
-;;  (lambda (form expander)
-;;   (unless (or (= (length form) 2) (= (length form) 3))
-;;    (error 'one-value "Improper ONE-VALUE: ~s" form))
-;;   (let ((form1 (second form))
-;; 	(form2 (if (= (length form) 2) '(fail) (third form)))
-;; 	(return (string->uninterned-symbol "return"))
-;; 	(old-fail (string->uninterned-symbol "old-fail")))
-;;    (expander `(call-with-current-continuation
-;; 	       (lambda (,return)
-;; 		(let ((,old-fail fail))
-;; 		 (set-fail! (lambda () (set-fail! ,old-fail) (,return ,form2)))
-;; 		 (let ((v ,form1))
-;; 		  (set-fail! ,old-fail)
-;; 		  v))))
-;; 	     expander))))
 
 (define-syntax one-value
  (syntax-rules ()
@@ -142,30 +86,6 @@
       (let ((v a))
        (set-fail! old-fail)
        v)))))))
-
-;; (define-macro local-one-value
-;;  ;; needs work: *FAIL?* can potentially be captured.
-;;  (lambda (form expander)
-;;   (unless (or (= (length form) 2) (= (length form) 3))
-;;    (error 'local-one-value "Improper LOCAL-ONE-VALUE: ~s" form))
-;;   (let ((form1 (second form))
-;; 	(form2 (if (= (length form) 2) '(fail) (third form)))
-;; 	(return (string->uninterned-symbol "return"))
-;; 	(old-fail (string->uninterned-symbol "old-fail"))
-;; 	(v (string->uninterned-symbol "v")))
-;;    (expander
-;;     `(call-with-current-continuation
-;;       (lambda (,return)
-;;        (let ((,v #f)
-;; 	     (,old-fail fail))
-;; 	(set-fail!
-;; 	 (lambda ()
-;; 	  (set-fail! ,old-fail)
-;; 	  (,return (cond (*fail?* ,form2) (else (set! *fail?* #t) ,v)))))
-;; 	(set! ,v ,form1)
-;; 	(set! *fail?* #f)
-;; 	(fail))))
-;;     expander))))
 
 (define-syntax local-one-value
  ;; TODO Unify these two rules
@@ -182,22 +102,6 @@
       (set! *fail?* #f)
       (fail)))))))
 
-;; (define-macro possibly?
-;;  (lambda (form expander)
-;;   (let ((return (string->uninterned-symbol "return"))
-;; 	(old-fail (string->uninterned-symbol "old-fail"))
-;; 	(v (string->uninterned-symbol "v")))
-;;    (expander
-;;     `(call-with-current-continuation
-;;       (lambda (,return)
-;;        (let ((,old-fail fail))
-;; 	(set-fail! (lambda () (set-fail! ,old-fail) (,return #f)))
-;; 	(let ((,v (begin ,@(cdr form))))
-;; 	 (unless ,v (fail))
-;; 	 (set-fail! ,old-fail)
-;; 	 ,v))))
-;;     expander))))
-
 (define-syntax possibly?
  (syntax-rules ()
   ((_ body ...)
@@ -208,24 +112,6 @@
       (let ((v (begin body ...)))
        (set-fail! old-fail)
        v)))))))
-
-;; (define-macro necessarily?
-;;  (lambda (form expander)
-;;   (let ((return (string->uninterned-symbol "return"))
-;; 	(old-fail (string->uninterned-symbol "old-fail"))
-;; 	(v (string->uninterned-symbol "v"))
-;; 	(u (string->uninterned-symbol "u")))
-;;    (expander
-;;     `(call-with-current-continuation
-;;       (lambda (,return)
-;;        (let ((,old-fail fail)
-;; 	     (,u #t))
-;; 	(set-fail! (lambda () (set-fail! ,old-fail) (,return ,u)))
-;; 	(let ((,v (begin ,@(cdr form))))
-;; 	 (when ,v (set! ,u ,v) (fail))
-;; 	 (set-fail! ,old-fail)
-;; 	 #f))))
-;;     expander))))
 
 (define-syntax necessarily?
  (syntax-rules ()
@@ -238,17 +124,6 @@
        (when v (set! u v) (fail))
        (set-fail! old-fail)
        #f)))))))
-
-;; (define-macro local-set!
-;;  (lambda (form expander)
-;;   (unless (= (length form) 3)
-;;    (error 'local-set! "Improper LOCAL-SET!: ~s" form))
-;;   (let ((p (string->uninterned-symbol "p")))
-;;    (expander `(begin
-;; 	       (let ((,p ,(second form)))
-;; 		(upon-failure (set! ,(second form) ,p)))
-;; 	       (set! ,(second form) ,(third form)))
-;; 	     expander))))
 
 (define-syntax local-set!
  (syntax-rules ()

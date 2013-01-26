@@ -1,9 +1,11 @@
+
 = Nondeterminism =
 
 This is a Chicken Scheme egg which implements nondeterministic
 computation. Note that its results are deterministic, there are no
-calls to rand(). Originally from Jeff Siskind's QobiScheme. Examples
-are available in the ''examples/'' directory.
+calls to rand(). Originally from Jeff Siskind's QobiScheme.
+
+Examples are available in the ''examples/'' directory.
 
 === Generation ===
 
@@ -32,19 +34,34 @@ Backtrack at this point.
 === Execution ===
 
 :(for-effects . body)
+
+Execute a nondeterministic computation only for its effects not its
+result.
+
 :(all-values . body)
+
+Execute a nondeterministic computation and produce a list of
+all of its possible outputs.
+
 :(one-value . body
 :(local-one-value . body)
+
+Execute a nondeterministic computation, return one output,
+and discard the rest of the computation.
+
 :(possibly? . body)
+
+Execute a nondeterministic computation and return #f if it always
+fails.
+
 :(necessarily? . body)
 
-Execute the nondeterministic program in ''body'' in a number of different
-ways.
+Execute a nondeterministic computation and return #f if it can fail.
 
 === Side-effects ===
 
-:unwind-trail
-:unwedge-trail
+:(unwind-trail)
+:(unwedge-trail)
 
 Pop the stack once or clear it entirely.
 
@@ -64,8 +81,8 @@ in terms of this primitive.
 === Low-level features ===
 
 :<nowiki>*</nowiki>fail?*
-:top-level-fail
-:set-fail!
+:(top-level-fail)
+:(set-fail! f)
 
 Internal
 

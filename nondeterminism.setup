@@ -6,5 +6,5 @@
 
 (setup-shared-extension-module 'nondeterminism (extension-version "1.0")
   #:inline? #t #:types? #t
-  #:compile-options '(-fixnum-arithmetic -O3 -d2)
+  #:compile-options '(-O3 -d2)
   #:install-options '((examples "examples/nondeterminism-dwelling.scm" "examples/nondeterminism-kalotan.scm" "examples/nondeterminism-money.scm")))
