@@ -1,10 +1,10 @@
 ;;;  -*- Hen -*-
 
 ((category data)
- (author "Jeff Siskind")
+ (author "Jeffrey Mark Siskind")
  (maintainer "Andrei Barbu")
- (license "GPL")
- (synopsis "Nondeterministic computation")
+ (license "LGPL")
+ (synopsis "Nondeterministic computations")
  (depends setup-helper miscmacros check-errors condition-utils)
  (test-depends test)
  (files "examples/nondeterminism-dwelling.scm"

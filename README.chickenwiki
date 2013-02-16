@@ -4,7 +4,7 @@
 This page is maintained in the package's
 [[https://github.com/abarbu/nondeterminism|github repository]].
 
-= Nondeterminism
+== Nondeterminism
 
 This is a Chicken Scheme egg which implements nondeterministic
 computation. Note that its results are deterministic, there are no
@@ -85,11 +85,70 @@ in terms of this primitive.
 
 === Low-level features
 
-:<nowiki>*</nowiki>fail?*
+<procedure><nowiki>*</nowiki>fail?*</procedure>
 <procedure>(top-level-fail)</procedure>
 <procedure>(set-fail! f)</procedure>
 
 Internal
+
+=== Example
+
+The following code is a rewrite of an example from the book "Teach
+Yourself Scheme in Fixnum Days" by Dorai Sitaram. The book gives the
+following problem setting:
+
+The Kalotans are a tribe with a peculiar quirk. Their males always
+tell the truth. Their females never make two consecutive true
+statements, or two consecutive untrue statements.
+
+An anthropologist (let's call him Worf) has begun to study them. Worf
+does not yet know the Kalotan language. One day, he meets a Kalotan
+(heterosexual) couple and their child Kibi. Worf asks Kibi: "Are you a
+boy?" Kibi answers in Kalotan, which of course Worf doesn't
+understand.
+
+Worf turns to the parents (who know English) for explanation. One of
+them says: "Kibi said: 'I am a boy.'" The other adds: "Kibi is a
+girl. Kibi lied."
+
+Solve for the sex of the parents and Kibi.
+
+<enscript highlight="scheme">
+(define (solve-kalotan-puzzle)
+ (define (xor a? b?) (if (and a? b?) #f (or a? b?)))
+ (one-value
+  (let ((parent1 (either 'male 'female))
+        (parent2 (either 'male 'female))
+        (kibi (either 'male 'female))
+        (kibi-self-desc (either 'male 'female))
+        (kibi-lied? (a-boolean)))
+   (unless (not (eq? parent1 parent2)) (fail))
+   (when kibi-lied?
+    (unless (xor (and (eq? kibi-self-desc 'male)
+                    (eq? kibi 'female))
+                 (and (eq? kibi-self-desc 'female)
+                    (eq? kibi 'male)))
+     (fail)))
+   (unless kibi-lied?
+    (unless (xor (and (eq? kibi-self-desc 'male)
+                    (eq? kibi 'male))
+                 (and (eq? kibi-self-desc 'female)
+                    (eq? kibi 'female)))
+     (fail)))
+   (when (eq? parent1 'male)
+    (unless (and (eq? kibi-self-desc 'male)
+               (xor (and (eq? kibi 'female)
+                       (not kibi-lied?))
+                    (and (eq? kibi 'male)
+                       kibi-lied?)))
+     (fail)))
+   (when (eq? parent1 'female)
+    (unless (and (eq? kibi 'female) 
+               kibi-lied?)
+     (fail)))
+   (list parent1 parent2 kibi))))
+</enscript>
+
 
 === License
 
@@ -97,14 +156,17 @@ Internal
    Copyright 1996 Technion. All rights reserved.
    Copyright 1996 and 1997 University of Vermont. All rights reserved.
    Copyright 1997-2001 NEC Research Institute, Inc. All rights reserved.
-   Copyright 2002-2012 Purdue University. All rights reserved.
+   Copyright 2002-2013 Purdue University. All rights reserved.
+
+   Contact Andrei Barbu at andrei@0xab.com. Originally written by Jeff Siskind.
+
    This program is free software: you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
+   it under the terms of the GNU Lesser General Public License as published by
    the Free Software Foundation, either version 3 of the License, or
    (at your option) any later version.
    This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   You should have received a copy of the GNU General Public License
+   GNU Lesser General Public License for more details.
+   You should have received a copy of the GNU Lesser General Public License
    along with this program.  If not, see http://www.gnu.org/licenses.
