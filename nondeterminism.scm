@@ -110,6 +110,7 @@
      (let ((old-fail fail))
       (set-fail! (lambda () (set-fail! old-fail) (return #f)))
       (let ((v (begin body ...)))
+       (unless v (fail))
        (set-fail! old-fail)
        v)))))))
 
